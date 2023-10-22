@@ -1,5 +1,8 @@
 import os
+import datetime
+
 import requests
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -23,7 +26,8 @@ def get_posts(group: str) -> list:
     for item in request.json()['response']['items']:
         if 'ComeToSpeak' in item['text']:
             post_url = f'https://vk.com/wall{item["owner_id"]}_{item["id"]}'
-            print(f'нашлось в посте по ссылке {post_url}')
+            post_date = datetime.datetime.fromtimestamp(item['date'])
+            print(f'нашлось в посте от {post_date} по ссылке {post_url}')
     # print(f'В последних {NUMBER_OF_POSTS_TO_PARSE} объявлениях об английском клубе не нашлось.')
 
 
