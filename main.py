@@ -35,6 +35,9 @@ def get_posts(groups: list[str, ...]) -> list[dict]:
 
 
 def print_results(posts: list) -> None:
+    """
+    Prints the formatted results of search
+    """
     found = False
     for post in posts:
         post_url: str = f'https://vk.com/wall{post["owner_id"]}_{post["id"]}'
