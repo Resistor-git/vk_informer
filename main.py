@@ -2,7 +2,8 @@
 #  отдельные результаты для каждого keyword, чтобы фильтровать по ним; через словарь {keyword: results}?
 #  прикрутить бота для тг
 #  упаковать в докер
-#  задеплоить
+#  прикрутиь workflow (как минимум с проверкой синтаксиса, лучше с тестами)
+#  задеплоить (добавить в workflow - CI/CD и всё такое)
 
 import os
 from datetime import datetime
@@ -39,14 +40,13 @@ def print_results(posts: list) -> None:
     """
     Prints the formatted results of search
     """
-    found = False
+    if len(posts) < 1:
+        print(f'В последних {NUMBER_OF_POSTS_TO_PARSE} постах информации об английских клубах не нашлось.')
+        return
     for post in posts:
         post_url: str = f'https://vk.com/wall{post["owner_id"]}_{post["id"]}'
         post_date: datetime = datetime.fromtimestamp(post['date'])
         print(f'Информация о клубе нашлась в посте от {post_date} по ссылке {post_url}')
-        found = True
-    if not found:
-        print(f'В последних {NUMBER_OF_POSTS_TO_PARSE} постах информации об английских клубах не нашлось.')
 
 
 def main() -> None:
