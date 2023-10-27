@@ -3,7 +3,8 @@
 #  прикрутить бота для тг
 #  упаковать в докер
 #  прикрутиь workflow (как минимум с проверкой синтаксиса, лучше с тестами)
-#  задеплоить (добавить в workflow - CI/CD и всё такое)
+#  задеплоить (добавить в workflow - CI/CD и всё такое); временно - pythonanywhere
+#  прикрутить логгер (см., например homework_bot)
 
 import os
 from datetime import datetime
@@ -18,6 +19,7 @@ VK_API_VER: str = os.getenv('VK_API_VER')
 NUMBER_OF_POSTS_TO_PARSE: int = int(os.getenv('NUMBER_OF_POSTS_TO_PARSE'))
 GROUPS: list[str, ...] = os.getenv('GROUPS').split(',')
 KEYWORDS: list[str, ...] = os.getenv('KEYWORDS').split(',')
+TELEGRAM_BOT: bool = eval(os.getenv('TELEGRAM_BOT'))
 
 
 def get_posts(groups: list[str, ...]) -> list[dict]:
@@ -50,8 +52,9 @@ def print_results(posts: list) -> None:
 
 
 def main() -> None:
-    print_results(get_posts(GROUPS))
-    print('Парсер закончил свою работу.')
+    if not TELEGRAM_BOT:
+        print_results(get_posts(GROUPS))
+        print('Парсер закончил свою работу.')
 
 
 if __name__ == '__main__':
