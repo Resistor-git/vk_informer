@@ -1,6 +1,6 @@
 # TODO:
 #  отдельные результаты для каждого keyword, чтобы фильтровать по ним; через словарь {keyword: results}?
-#  прикрутить бота для тг
+#  выполнять по таймеру
 #  упаковать в докер
 #  прикрутиь workflow (как минимум с проверкой синтаксиса, лучше с тестами)
 #  задеплоить (добавить в workflow - CI/CD и всё такое); временно - pythonanywhere
@@ -12,9 +12,11 @@ from datetime import datetime
 import requests
 from dotenv import load_dotenv
 
+from telegram_bot import send_message
+
 load_dotenv()
 
-ACCESS_TOKEN: str = os.getenv('ACCESS_TOKEN')
+VK_ACCESS_TOKEN: str = os.getenv('VK_ACCESS_TOKEN')
 VK_API_VER: str = os.getenv('VK_API_VER')
 NUMBER_OF_POSTS_TO_PARSE: int = int(os.getenv('NUMBER_OF_POSTS_TO_PARSE'))
 GROUPS: list[str, ...] = os.getenv('GROUPS').split(',')
@@ -29,7 +31,7 @@ def get_posts(groups: list[str, ...]) -> list[dict]:
     posts_with_keyword = []
     for group in groups:
         url = f'https://api.vk.com/method/wall.get?domain={group}&count={NUMBER_OF_POSTS_TO_PARSE}&filter=owner' \
-              f'&&access_token={ACCESS_TOKEN}&v={VK_API_VER}'
+              f'&&access_token={VK_ACCESS_TOKEN}&v={VK_API_VER}'
         request = requests.get(url)
         for item in request.json()['response']['items']:
             for keyword in KEYWORDS:
@@ -52,7 +54,9 @@ def print_results(posts: list) -> None:
 
 
 def main() -> None:
-    if not TELEGRAM_BOT:
+    if TELEGRAM_BOT:
+        send_message(posts=get_posts(GROUPS))
+    else:
         print_results(get_posts(GROUPS))
         print('Парсер закончил свою работу.')
 
