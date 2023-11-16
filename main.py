@@ -1,13 +1,14 @@
 # TODO:
 #  отдельные результаты для каждого keyword, чтобы фильтровать по ним; через словарь {keyword: results}?
-#  выполнять по таймеру
-#  упаковать в докер
-#  прикрутиь workflow (как минимум с проверкой синтаксиса, лучше с тестами)
+#  проверять наличие необходимых ключей и прочее
+#  обрабатывать исключения
+#  прикрутить workflow (как минимум с проверкой синтаксиса, лучше с тестами)
 #  задеплоить (добавить в workflow - CI/CD и всё такое); временно - pythonanywhere
 #  прикрутить логгер (см., например homework_bot)
 #  аннотация типов
 
 import os
+import time
 from datetime import datetime
 
 import requests
@@ -23,6 +24,7 @@ NUMBER_OF_POSTS_TO_PARSE: int = int(os.getenv('NUMBER_OF_POSTS_TO_PARSE'))
 GROUPS: list[str, ...] = os.getenv('GROUPS').split(',')
 KEYWORDS: list[str, ...] = os.getenv('KEYWORDS').split(',')
 TELEGRAM_BOT: bool = eval(os.getenv('TELEGRAM_BOT'))
+RESTART_INTERVAL: int = int(os.getenv('RESTART_INTERVAL'))
 
 
 def get_posts(groups: list[str, ...]) -> list[dict]:
@@ -55,13 +57,14 @@ def print_results(posts: list) -> None:
 
 
 def main() -> None:
-
-    if TELEGRAM_BOT:
-        send_message(posts=get_posts(GROUPS))
-        print('Отправлено сообщение в телеграм.')
-    else:
-        print_results(get_posts(GROUPS))
-        print('Парсер закончил свою работу.')
+    while True:
+        if TELEGRAM_BOT:
+            send_message(posts=get_posts(GROUPS))
+            print('Отправлено сообщение в телеграм.')
+        else:
+            print_results(get_posts(GROUPS))
+            print('Парсер закончил свою работу.')
+        time.sleep(RESTART_INTERVAL)
 
 
 if __name__ == '__main__':

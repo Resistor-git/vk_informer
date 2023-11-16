@@ -1,5 +1,7 @@
-# TODO
-# обновиться на последнюю версию python-telegram-bot (будут баги)
+# TODO:
+#  обновиться на последнюю версию python-telegram-bot (будут баги)
+#  не отправлять повторные сообщения
+#  отправлять сообщения об ошибках
 
 import os
 from datetime import datetime
