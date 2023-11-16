@@ -56,6 +56,7 @@ def print_results(posts: list) -> None:
 def main() -> None:
     if TELEGRAM_BOT:
         send_message(posts=get_posts(GROUPS))
+        print('Отправлено сообщение в телеграм.')
     else:
         print_results(get_posts(GROUPS))
         print('Парсер закончил свою работу.')
