@@ -1,4 +1,4 @@
-FROM python:3.11-slim
+FROM python:3.11-alpine
 LABEL authors="Resistor"
 WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE 1

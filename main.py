@@ -5,6 +5,7 @@
 #  прикрутиь workflow (как минимум с проверкой синтаксиса, лучше с тестами)
 #  задеплоить (добавить в workflow - CI/CD и всё такое); временно - pythonanywhere
 #  прикрутить логгер (см., например homework_bot)
+#  аннотация типов
 
 import os
 from datetime import datetime
@@ -54,6 +55,7 @@ def print_results(posts: list) -> None:
 
 
 def main() -> None:
+
     if TELEGRAM_BOT:
         send_message(posts=get_posts(GROUPS))
         print('Отправлено сообщение в телеграм.')
