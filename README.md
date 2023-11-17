@@ -15,7 +15,7 @@ Create `.env in the` root and fill it with values. As an example use `.env.examp
 * `TELEGRAM_BOT` - 'True' to send messages via the telegram bot, otherwise 'False'.
 * `TELEGRAM_BOT_TOKEN` - token of your telegram bot.
 * `TELEGRAM_CHAT_ID` - id of the telegram chat to send messages to.
-* `RESTART_INTERVAL` - time in seconds between program calls. Default is 1800 (30 minutes).
+* `RESTART_INTERVAL` - time in seconds between program calls.
 
 Launch `main.py`. For Windows it would be `py main.py` in terminal/cmd.
 
