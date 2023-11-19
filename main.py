@@ -9,7 +9,9 @@
 #  аннотация типов
 
 import os
+import sys
 import time
+import logging
 from datetime import datetime
 
 import requests
@@ -18,6 +20,7 @@ from dotenv import load_dotenv
 from telegram_bot import send_message
 
 load_dotenv()
+logger = logging.getLogger(__name__)
 
 VK_ACCESS_TOKEN: str = os.getenv('VK_ACCESS_TOKEN')
 VK_API_VER: str = os.getenv('VK_API_VER')
@@ -26,6 +29,27 @@ GROUPS: list[str, ...] = os.getenv('GROUPS').split(',')
 KEYWORDS: list[str, ...] = os.getenv('KEYWORDS').split(',')
 TELEGRAM_BOT: bool = eval(os.getenv('TELEGRAM_BOT'))
 RESTART_INTERVAL: int = int(os.getenv('RESTART_INTERVAL'))
+
+
+def check_tokens():
+    """Check that necessary tokens are provided.
+    By default, necessary tokens are:
+    VK_ACCESS_TOKEN, VK_API_VER, NUMBER_OF_POSTS_TO_PARSE,
+    GROUPS, KEYWORDS, TELEGRAM_BOT, RESTART_INTERVAL
+    """
+    expected_variables = {
+        'VK_ACCESS_TOKEN': VK_ACCESS_TOKEN,
+        'VK_API_VER': VK_API_VER,
+        'NUMBER_OF_POSTS_TO_PARSE': NUMBER_OF_POSTS_TO_PARSE,
+        'GROUPS': GROUPS,
+        'KEYWORDS': KEYWORDS,
+        'TELEGRAM_BOT': TELEGRAM_BOT,
+        'RESTART_INTERVAL': RESTART_INTERVAL  # ломается выше
+    }
+    for variable in expected_variables:
+        if not expected_variables[variable]:
+            logger.critical(f'{variable} not found. Program stopped')
+            sys.exit()
 
 
 def get_posts(groups: list[str, ...]) -> list[dict]:
@@ -46,7 +70,7 @@ def get_posts(groups: list[str, ...]) -> list[dict]:
 
 def print_results(posts: list) -> None:
     """
-    Prints the formatted results of search
+    Prints the formatted results of search in terminal.
     """
     if len(posts) < 1:
         print(f'В последних {NUMBER_OF_POSTS_TO_PARSE} постах информации об английских клубах не нашлось.')
