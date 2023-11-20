@@ -16,36 +16,52 @@ from datetime import datetime
 
 import requests
 from dotenv import load_dotenv
-
 from telegram_bot import send_message
+
+from telegram_bot import clear_posts_sent
 
 load_dotenv()
 logger = logging.getLogger(__name__)
 
 VK_ACCESS_TOKEN: str = os.getenv('VK_ACCESS_TOKEN')
 VK_API_VER: str = os.getenv('VK_API_VER')
-NUMBER_OF_POSTS_TO_PARSE: int = int(os.getenv('NUMBER_OF_POSTS_TO_PARSE'))
+NUMBER_OF_POSTS_TO_PARSE: str = os.getenv('NUMBER_OF_POSTS_TO_PARSE')
 GROUPS: list[str, ...] = os.getenv('GROUPS').split(',')
 KEYWORDS: list[str, ...] = os.getenv('KEYWORDS').split(',')
 TELEGRAM_BOT: bool = eval(os.getenv('TELEGRAM_BOT'))
-RESTART_INTERVAL: int = int(os.getenv('RESTART_INTERVAL'))
+if TELEGRAM_BOT:
+    try:
+        TELEGRAM_BOT_TOKEN: str = os.getenv('TELEGRAM_BOT_TOKEN')
+        TELEGRAM_CHAT_ID: int = int(os.getenv('TELEGRAM_CHAT_ID'))
+        RESTART_INTERVAL: int = int(os.getenv('RESTART_INTERVAL'))
+    except ValueError:
+        logger.critical('Unexpected data in .env')
+        sys.exit()
 
 
 def check_tokens():
     """Check that necessary tokens are provided.
-    By default, necessary tokens are:
-    VK_ACCESS_TOKEN, VK_API_VER, NUMBER_OF_POSTS_TO_PARSE,
-    GROUPS, KEYWORDS, TELEGRAM_BOT, RESTART_INTERVAL
     """
-    expected_variables: dict = {
-        'VK_ACCESS_TOKEN': VK_ACCESS_TOKEN,
-        'VK_API_VER': VK_API_VER,
-        'NUMBER_OF_POSTS_TO_PARSE': NUMBER_OF_POSTS_TO_PARSE,
-        'GROUPS': GROUPS,
-        'KEYWORDS': KEYWORDS,
-        'TELEGRAM_BOT': TELEGRAM_BOT,
-        'RESTART_INTERVAL': RESTART_INTERVAL  # ломается выше
-    }
+    if TELEGRAM_BOT:
+        expected_variables: dict = {
+            'VK_ACCESS_TOKEN': VK_ACCESS_TOKEN,
+            'VK_API_VER': VK_API_VER,
+            'GROUPS': GROUPS,
+            'KEYWORDS': KEYWORDS,
+            'NUMBER_OF_POSTS_TO_PARSE': NUMBER_OF_POSTS_TO_PARSE,
+            'TELEGRAM_BOT': TELEGRAM_BOT,
+            'TELEGRAM_BOT_TOKEN': TELEGRAM_BOT_TOKEN,
+            'TELEGRAM_CHAT_ID': TELEGRAM_CHAT_ID,
+            'RESTART_INTERVAL': RESTART_INTERVAL
+        }
+    else:
+        expected_variables: dict = {
+            'VK_ACCESS_TOKEN': VK_ACCESS_TOKEN,
+            'VK_API_VER': VK_API_VER,
+            'NUMBER_OF_POSTS_TO_PARSE': NUMBER_OF_POSTS_TO_PARSE,
+            'GROUPS': GROUPS,
+            'KEYWORDS': KEYWORDS,
+        }
     for variable in expected_variables:
         if not expected_variables[variable]:
             logger.critical(f'{variable} not found. Program stopped')
@@ -61,10 +77,10 @@ def get_posts(groups: list[str, ...]) -> list[dict]:
         url = f'https://api.vk.com/method/wall.get?domain={group}&count={NUMBER_OF_POSTS_TO_PARSE}&filter=owner' \
               f'&&access_token={VK_ACCESS_TOKEN}&v={VK_API_VER}'
         request = requests.get(url)
-        for item in request.json()['response']['items']:
+        for post in request.json()['response']['items']:
             for keyword in KEYWORDS:
-                if keyword in item['text']:
-                    posts_with_keyword.append(item)
+                if keyword in post['text']:
+                    posts_with_keyword.append(post)
     return posts_with_keyword
 
 
@@ -82,13 +98,15 @@ def print_results(posts: list) -> None:
 
 
 def main() -> None:
-    while True:
-        if TELEGRAM_BOT:
+    check_tokens()
+    if TELEGRAM_BOT:
+        while True:
             send_message(posts=get_posts(GROUPS))
-        else:
-            print_results(get_posts(GROUPS))
-            print('Парсер закончил свою работу.')
-        time.sleep(RESTART_INTERVAL)
+            clear_posts_sent()
+            time.sleep(RESTART_INTERVAL)
+    else:
+        print_results(get_posts(GROUPS))
+        print('Парсер закончил свою работу.')
 
 
 if __name__ == '__main__':

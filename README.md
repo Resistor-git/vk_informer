@@ -1,5 +1,5 @@
 # vk_informer
-Informs about new events in VK groups of Saint-Petersburg libraries
+Informs about new events in VK groups of Saint-Petersburg libraries.
 
 ## work in progress...
 
@@ -20,6 +20,14 @@ Create `.env in the` root and fill it with values. As an example use `.env.examp
 _Note: If you are planning to use Docker, do not use quotation marks in .env._
 
 Launch `main.py`. For Windows it would be `py main.py` in terminal/cmd.
+
+## Telegram messages
+If you want to get messages in telegram:
+* Set `TELEGRAM_BOT` in .env to `True`
+* Add `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` and `RESTART_INTERVAL` to .env
+
+## Known bugs
+* Empty value for `GROUPS` in .env is not handled properly by check_tokens(). Probable fix: get rid of .env and use configparser.
 
 ## Author
 Resistor, https://github.com/Resistor-git/
