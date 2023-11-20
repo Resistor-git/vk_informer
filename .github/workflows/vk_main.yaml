@@ -46,4 +46,4 @@ jobs:
               --name vk_informer_container \
               --env-file .env \
               ${{ secrets.DOCKERHUB_USERNAME }}/vk_informer
-            sudo docker system prune -f --filter "until=1h"
+            sudo docker system prune -f
