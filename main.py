@@ -1,5 +1,5 @@
 # TODO:
-#  убрать куда-то .env ... прописать в .dockerignore?
+#  докер некорректно читает кавычки - переехать на configparser
 #  отдельные результаты для каждого keyword, чтобы фильтровать по ним; через словарь {keyword: results}?
 #  проверять наличие необходимых ключей и прочее
 #  обрабатывать исключения
@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 
 from telegram_bot import send_message
 
-# load_dotenv()
+load_dotenv()
 logger = logging.getLogger(__name__)
 
 VK_ACCESS_TOKEN: str = os.getenv('VK_ACCESS_TOKEN')
