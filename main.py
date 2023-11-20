@@ -37,7 +37,7 @@ def check_tokens():
     VK_ACCESS_TOKEN, VK_API_VER, NUMBER_OF_POSTS_TO_PARSE,
     GROUPS, KEYWORDS, TELEGRAM_BOT, RESTART_INTERVAL
     """
-    expected_variables = {
+    expected_variables: dict = {
         'VK_ACCESS_TOKEN': VK_ACCESS_TOKEN,
         'VK_API_VER': VK_API_VER,
         'NUMBER_OF_POSTS_TO_PARSE': NUMBER_OF_POSTS_TO_PARSE,
@@ -56,7 +56,7 @@ def get_posts(groups: list[str, ...]) -> list[dict]:
     """
     Gets posts from the vk groups. Filters them by keywords.
     """
-    posts_with_keyword = []
+    posts_with_keyword: list[...] = []
     for group in groups:
         url = f'https://api.vk.com/method/wall.get?domain={group}&count={NUMBER_OF_POSTS_TO_PARSE}&filter=owner' \
               f'&&access_token={VK_ACCESS_TOKEN}&v={VK_API_VER}'
@@ -85,7 +85,6 @@ def main() -> None:
     while True:
         if TELEGRAM_BOT:
             send_message(posts=get_posts(GROUPS))
-            print('Отправлено сообщение в телеграм.')
         else:
             print_results(get_posts(GROUPS))
             print('Парсер закончил свою работу.')
