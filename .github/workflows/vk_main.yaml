@@ -40,6 +40,7 @@ jobs:
           script: |
             cd vk_informer
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/vk_informer
+            ${{ secrets.PASSWORD }}
             sudo docker stop vk_informer_container
             sudo docker rm vk_informer_container
             sudo docker run -d \
