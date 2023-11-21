@@ -4,9 +4,7 @@
 #  проверять наличие необходимых ключей и прочее
 #  обрабатывать исключения
 #  прикрутить workflow (как минимум с проверкой синтаксиса, лучше с тестами)
-#  задеплоить (добавить в workflow - CI/CD и всё такое); временно - pythonanywhere
 #  прикрутить логгер (см., например homework_bot)
-#  аннотация типов
 
 import os
 import sys
@@ -21,7 +19,21 @@ from telegram_bot import send_message
 from telegram_bot import clear_posts_sent
 
 load_dotenv()
+
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s -- %(name)s -- %(message)s')
+
+file_handler = logging.FileHandler('logs/vk_informer.log')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setLevel(logging.INFO)
+
+logger.addHandler(file_handler)
+logger.addHandler(stream_handler)
 
 VK_ACCESS_TOKEN: str = os.getenv('VK_ACCESS_TOKEN')
 VK_API_VER: str = os.getenv('VK_API_VER')
@@ -103,10 +115,11 @@ def main() -> None:
         while True:
             send_message(posts=get_posts(GROUPS))
             clear_posts_sent()
+            logger.info('Парсер отработал цикл.')
             time.sleep(RESTART_INTERVAL)
     else:
         print_results(get_posts(GROUPS))
-        print('Парсер закончил свою работу.')
+        logger.info('Парсер закончил свою работу.')
 
 
 if __name__ == '__main__':

@@ -1,9 +1,8 @@
 # TODO:
 #  обновиться на последнюю версию python-telegram-bot (будут баги)
-#  не отправлять повторные сообщения
 #  отправлять несколько результатов одним сообщением
 #  отправлять сообщения об ошибках
-
+import logging
 import os
 from datetime import datetime
 
@@ -11,6 +10,21 @@ from dotenv import load_dotenv
 from telegram import Bot
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+formatter = logging.Formatter('%(asctime)s -- %(name)s -- %(message)s')
+
+file_handler = logging.FileHandler('logs/vk_informer.log')
+file_handler.setLevel(logging.DEBUG)
+file_handler.setFormatter(formatter)
+
+stream_handler = logging.StreamHandler()
+stream_handler.setLevel(logging.ERROR)
+
+logger.addHandler(file_handler)
+logger.addHandler(stream_handler)
 
 TELEGRAM_BOT_TOKEN: str = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID: str = os.getenv('TELEGRAM_CHAT_ID')
@@ -32,7 +46,7 @@ def send_message(posts: list[dict, ...]) -> None:
             if post['id'] not in posts_sent:
                 posts_sent.add(post['id'])
                 bot.send_message(TELEGRAM_CHAT_ID, text)
-                print('Отправлено сообщение в телеграм')
+                logger.info('Отправлено сообщение в телеграм')
     else:
         print('Информации об английских клубах не нашлось.')
 
@@ -45,5 +59,5 @@ def clear_posts_sent() -> None:
     """
     if len(posts_sent) > MAX_LEN:
         posts_sent.clear()
-        print(f'Список отправленных постов достиг максимальной длины {MAX_LEN} '
-              f'и был очищен')
+        logger.info(f'Список отправленных постов достиг максимальной длины {MAX_LEN} '
+                    f'и был очищен')
