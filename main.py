@@ -4,7 +4,8 @@
 #  проверять наличие необходимых ключей и прочее
 #  обрабатывать исключения
 #  прикрутить workflow (как минимум с проверкой синтаксиса, лучше с тестами)
-#  прикрутить логгер (см., например homework_bot)
+#  создать конфиг для логгера
+#  создать volume и писать логи туда
 
 import os
 import sys
@@ -26,7 +27,7 @@ logger.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s -- %(name)s -- %(message)s')
 
 file_handler = logging.FileHandler('logs/vk_informer.log')
-file_handler.setLevel(logging.DEBUG)
+file_handler.setLevel(logging.ERROR)
 file_handler.setFormatter(formatter)
 
 stream_handler = logging.StreamHandler()
@@ -110,16 +111,20 @@ def print_results(posts: list) -> None:
 
 
 def main() -> None:
-    check_tokens()
-    if TELEGRAM_BOT:
-        while True:
-            send_message(posts=get_posts(GROUPS))
-            clear_posts_sent()
-            logger.info('Парсер отработал цикл.')
-            time.sleep(RESTART_INTERVAL)
-    else:
-        print_results(get_posts(GROUPS))
-        logger.info('Парсер закончил свою работу.')
+    try:
+        check_tokens()
+        if TELEGRAM_BOT:
+            while True:
+                send_message(posts=get_posts(GROUPS))
+                clear_posts_sent()
+                logger.info('Парсер отработал цикл.')
+                time.sleep(RESTART_INTERVAL)
+        else:
+            print_results(get_posts(GROUPS))
+            logger.info('Парсер закончил свою работу.')
+            raise ValueError('test')
+    except Exception:
+        logger.exception('Unexpected Exception')
 
 
 if __name__ == '__main__':
