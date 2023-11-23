@@ -28,6 +28,7 @@ If you want to get messages in telegram:
 
 ## Known bugs
 * Empty value for `GROUPS` in .env is not handled properly by check_tokens(). Probable fix: get rid of .env and use configparser.
+* KeyError exception for situations with wrong response is not logged.
 
 ## Author
 Resistor, https://github.com/Resistor-git/

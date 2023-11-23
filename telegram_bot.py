@@ -17,24 +17,25 @@ logger.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s -- %(name)s -- %(message)s')
 
 file_handler = logging.FileHandler('logs/vk_informer.log')
-file_handler.setLevel(logging.DEBUG)
+file_handler.setLevel(logging.ERROR)
 file_handler.setFormatter(formatter)
 
 stream_handler = logging.StreamHandler()
-stream_handler.setLevel(logging.ERROR)
+stream_handler.setLevel(logging.INFO)
 
 logger.addHandler(file_handler)
 logger.addHandler(stream_handler)
 
 TELEGRAM_BOT_TOKEN: str = os.getenv('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID: str = os.getenv('TELEGRAM_CHAT_ID')
+TELEGRAM_ADMIN_CHAT_ID: int = int(os.getenv('TELEGRAM_ADMIN_CHAT_ID'))
 
 MAX_LEN = 1_000
 posts_sent: set[int, ...] = set()
 bot: Bot = Bot(token=TELEGRAM_BOT_TOKEN)
 
 
-def send_message(posts: list[dict, ...]) -> None:
+def send_tg_message(posts: list[dict, ...]) -> None:
     """
     Sends a message for each post with a keyword.
     """
@@ -49,6 +50,13 @@ def send_message(posts: list[dict, ...]) -> None:
                 logger.info('Отправлено сообщение в телеграм')
     else:
         print('Информации об английских клубах не нашлось.')
+
+
+def send_error_message(message):
+    """
+    Sends a message with text of an error."""
+    bot.send_message(TELEGRAM_ADMIN_CHAT_ID,
+                     text=f'Somethig is wrong: {message}')
 
 
 def clear_posts_sent() -> None:

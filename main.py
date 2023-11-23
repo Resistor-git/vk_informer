@@ -15,9 +15,7 @@ from datetime import datetime
 
 import requests
 from dotenv import load_dotenv
-from telegram_bot import send_message
-
-from telegram_bot import clear_posts_sent
+from telegram_bot import send_tg_message, clear_posts_sent, send_error_message
 
 load_dotenv()
 
@@ -46,6 +44,7 @@ if TELEGRAM_BOT:
     try:
         TELEGRAM_BOT_TOKEN: str = os.getenv('TELEGRAM_BOT_TOKEN')
         TELEGRAM_CHAT_ID: int = int(os.getenv('TELEGRAM_CHAT_ID'))
+        TELEGRAM_ADMIN_CHAT_ID: int = int(os.getenv('TELEGRAM_ADMIN_CHAT_ID'))
         RESTART_INTERVAL: int = int(os.getenv('RESTART_INTERVAL'))
     except ValueError:
         logger.critical('Unexpected data in .env')
@@ -96,7 +95,7 @@ def get_posts(groups: list[str, ...]) -> list[dict]:
                     if keyword in post['text']:
                         posts_with_keyword.append(post)
         except KeyError:
-            logger.exception(f'Something wrong with request: {request.json()}')
+            logger.exception(f'Something wrong with request: {request.json()}')            
     return posts_with_keyword
 
 
@@ -118,16 +117,17 @@ def main() -> None:
         check_tokens()
         if TELEGRAM_BOT:
             while True:
-                send_message(posts=get_posts(GROUPS))
+                send_tg_message(posts=get_posts(GROUPS))
                 clear_posts_sent()
                 logger.info('Парсер отработал цикл.')
                 time.sleep(RESTART_INTERVAL)
         else:
             print_results(get_posts(GROUPS))
             logger.info('Парсер закончил свою работу.')
-            raise ValueError('test')
     except Exception:
         logger.exception('Unexpected Exception')
+        if TELEGRAM_BOT:
+            send_error_message('Unexpected Exception')
 
 
 if __name__ == '__main__':
