@@ -85,15 +85,18 @@ def get_posts(groups: list[str, ...]) -> list[dict]:
     """
     Gets posts from the vk groups. Filters them by keywords.
     """
-    posts_with_keyword: list[...] = []
+    posts_with_keyword: list = []
     for group in groups:
         url = f'https://api.vk.com/method/wall.get?domain={group}&count={NUMBER_OF_POSTS_TO_PARSE}&filter=owner' \
               f'&&access_token={VK_ACCESS_TOKEN}&v={VK_API_VER}'
         request = requests.get(url)
-        for post in request.json()['response']['items']:
-            for keyword in KEYWORDS:
-                if keyword in post['text']:
-                    posts_with_keyword.append(post)
+        try:
+            for post in request.json()['response']['items']:
+                for keyword in KEYWORDS:
+                    if keyword in post['text']:
+                        posts_with_keyword.append(post)
+        except KeyError:
+            logger.exception(f'Something wrong with request: {request.json()}')
     return posts_with_keyword
 
 
