@@ -64,6 +64,7 @@ def check_tokens():
             'TELEGRAM_BOT': TELEGRAM_BOT,
             'TELEGRAM_BOT_TOKEN': TELEGRAM_BOT_TOKEN,
             'TELEGRAM_CHAT_ID': TELEGRAM_CHAT_ID,
+            'TELEGRAM_ADMIN_CHAT_ID': TELEGRAM_ADMIN_CHAT_ID,
             'RESTART_INTERVAL': RESTART_INTERVAL
         }
     else:
