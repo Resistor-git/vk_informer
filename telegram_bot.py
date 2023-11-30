@@ -47,9 +47,12 @@ def send_tg_message(posts: list[dict, ...]) -> None:
             if post['id'] not in posts_sent:
                 posts_sent.add(post['id'])
                 bot.send_message(TELEGRAM_CHAT_ID, text)
-                logger.info('Отправлено сообщение в телеграм')
+                logger.info(
+                    f'{datetime.now().strftime("%Y.%m.%d %H:%M",)} '
+                    f'Отправлено сообщение в телеграм.'
+                )
     else:
-        print('Информации об английских клубах не нашлось.')
+        logger.info('Информации об английских клубах не нашлось.')
 
 
 def send_error_message(message):
@@ -59,7 +62,7 @@ def send_error_message(message):
                      text=f'Somethig is wrong: {message}')
 
 
-def clear_posts_sent() -> None:
+def check_posts_sent() -> None:
     """
     Clears the list of posts which have been sent by send_message()
     if it achieved max length.

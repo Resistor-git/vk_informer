@@ -15,7 +15,7 @@ from datetime import datetime
 
 import requests
 from dotenv import load_dotenv
-from telegram_bot import send_tg_message, clear_posts_sent, send_error_message
+from telegram_bot import send_tg_message, check_posts_sent, send_error_message
 
 load_dotenv()
 
@@ -119,12 +119,18 @@ def main() -> None:
         if TELEGRAM_BOT:
             while True:
                 send_tg_message(posts=get_posts(GROUPS))
-                clear_posts_sent()
-                logger.info('Парсер отработал цикл.')
+                check_posts_sent()
+                logger.info(
+                    f'{datetime.now().strftime("%Y.%m.%d %H:%M",)}'
+                    f' Парсер отработал цикл.'
+                )
                 time.sleep(RESTART_INTERVAL)
         else:
             print_results(get_posts(GROUPS))
-            logger.info('Парсер закончил свою работу.')
+            logger.info(
+                f'{datetime.now().strftime("%Y.%m.%d %H:%M",)}'
+                f' Парсер закончил свою работу.'
+            )
     except Exception:
         logger.exception('Unexpected Exception')
         if TELEGRAM_BOT:
