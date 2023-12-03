@@ -93,7 +93,7 @@ def get_posts(groups: list[str, ...]) -> list[dict]:
         try:
             for post in request.json()['response']['items']:
                 for keyword in KEYWORDS:
-                    if keyword in post['text']:
+                    if keyword.lower() in post['text'].lower():
                         posts_with_keyword.append(post)
         except KeyError:
             logger.exception(f'Something wrong with request: {request.json()}')            
