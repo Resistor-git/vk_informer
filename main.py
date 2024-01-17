@@ -96,7 +96,7 @@ def get_posts(groups: list[str, ...]) -> list[dict]:
                     if keyword.lower() in post['text'].lower():
                         posts_with_keyword.append(post)
         except KeyError:
-            logger.exception(f'Something wrong with request: {request.json()}')            
+            logger.exception(f'Something wrong with request: {request.json()}')
     return posts_with_keyword
 
 
@@ -131,10 +131,10 @@ def main() -> None:
                 f'{datetime.now().strftime("%Y.%m.%d %H:%M",)}'
                 f' Парсер закончил свою работу.'
             )
-    except Exception:
+    except Exception as e:
         logger.exception('Unexpected Exception')
         if TELEGRAM_BOT:
-            send_error_message('Unexpected Exception')
+            send_error_message(f'Unexpected Exception\n{repr(e)}')
 
 
 if __name__ == '__main__':
