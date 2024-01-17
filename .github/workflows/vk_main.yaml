@@ -45,6 +45,6 @@ jobs:
             sudo docker run -d \
               --name vk_informer_container \
               --env-file .env \
-              --restart on-failure[5] \
+              --restart on-failure:5 \
               ${{ secrets.DOCKERHUB_USERNAME }}/vk_informer
             sudo docker system prune -f
