@@ -18,7 +18,7 @@ Create `.env in the` root and fill it with values. As an example use `.env.examp
 * `TELEGRAM_ADMIN_CHAT_ID` - id of the telegram chat for maintenance messages.
 * `RESTART_INTERVAL` - time in seconds between program calls.
 
-_Note: If you are planning to use Docker, do not use quotation marks in .env._
+_Note: If you are planning to use Docker, do not use quotation marks in .env._\
 _Remember: in order to get messages from any telegram bot you should first send `/start` to it._
 
 Launch `main.py`. For Windows it would be `py main.py` in terminal/cmd.
